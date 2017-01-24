@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+[[ $DEBUG ]] && set -x
+
+## Load slug from Bind Mount, URL, AWS or STDIN
+
+export HOME=/app
+mkdir -p $HOME
+
+if [[ $(ls -A $HOME) ]]; then
+	true
+elif [[ $SLUG_AWS_KEY && $SLUG_AWS_SECRET && $SLUG_KEY ]]; then
+  # download slug from s3
+  export AWS_ACCESS_KEY_ID=$SLUG_AWS_KEY
+  export AWS_SECRET_ACCESS_KEY=$SLUG_AWS_SECRET
+  aws s3 cp s3://$SLUG_KEY slug.tgz
+	tar -xzf slug.tgz -C $HOME
+	rm slug.tgz
+  unset AWS_ACCESS_KEY_ID
+  unset AWS_SECRET_ACCESS_KEY
+elif [[ $SLUG_URL ]]; then
+  # download slug from url
+  curl $SLUG_URL slug.tgz
+	tar -xzf slug.tgz -C $HOME
+	rm slug.tgz
+	unset SLUG_URL
+else
+	cat | tar -xzC $HOME
+fi
+
+cd $HOME
+
+## Load profile.d and release config
+
+shopt -s nullglob
+mkdir -p .profile.d
+
+# If a file is created in slugbuilder with the wrong UID, change it. But we
+# don't mess with anything owned by UID 0.
+find . -user 1000 -exec chown slug:slug {} \;
+
+if [[ -s .release ]]; then
+	ruby -e "require 'yaml';((YAML.load_file('.release') || {})['config_vars'] || {}).each{|k,v| puts \"#{k}='#{v}'\"}" > .profile.d/config_vars
+fi
+for file in .profile.d/*; do
+	# shellcheck source=/dev/null
+	source "$file"
+done
+hash -r
+
+## Inject "start" command to run processes defined in Procfile
+case "$1" in
+	start)
+		if [[ -f Procfile ]]; then
+			command="$(ruby -e "require 'yaml';puts YAML.load_file('Procfile')['$2']")"
+		else
+			command="$(ruby -e "require 'yaml';puts (YAML.load_file('.release')['default_process_types'] || {})['$2']")"
+		fi
+		;;
+	*)
+		# shellcheck disable=SC2124
+		command="$@"
+		;;
+esac
+
+## Run!
+exec bash -c "$command"
