@@ -16,6 +16,17 @@ ADD ./runner /runner
 RUN chmod +x /runner/init
 RUN chown slug:slug /app /runner/init
 
+# make app binaries etc available
+RUN echo "# source /app/.profile.d/* \n\
+if [ -d /app/.profile.d ]; then \n\
+  for i in /app/.profile.d/*.sh; do \n\
+    if [ -r $i ]; then \n\
+      . $i \n\
+    fi \n\
+  done \n\
+  unset i \n\
+fi \n" >> /etc/profile
+
 USER slug
 ENV HOME /app
 ENTRYPOINT ["/runner/init"]
