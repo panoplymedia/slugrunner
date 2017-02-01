@@ -63,6 +63,10 @@ You can also use a slug from Amazon S3 with the following environment variables:
 docker run -e SLUG_KEY=my-bucket/items/stuff/someslug.tgz -e SLUG_AWS_KEY=XXX -e SLUG_AWS_SECRET=XXX panoplymedia/slugrunner start web
 ```
 
+## Debugging
+
+Set environment variable `DEBUG=true` to get debug output from the script.
+
 ## Motivation and Thanks
 
 This library is heavily based on [deis/slugrunner](https://github.com/deis/slugrunner), and most notably adds the option to run a slug off of [Amazon S3](https://aws.amazon.com/s3/).
