@@ -63,10 +63,21 @@ You can also use a slug from Amazon S3 with the following environment variables:
 docker run -e SLUG_KEY=my-bucket/items/stuff/someslug.tgz -e SLUG_AWS_KEY=XXX -e SLUG_AWS_SECRET=XXX panoplymedia/slugrunner start web
 ```
 
+### Google Cloud Storage
+
+You can also use a slug from Google Cloud Storage with the following environment variables:
+- `SLUG_KEY`: `cloud-storage-bucket-name/path/to/slug.tgz`
+- `SLUG_GOOGLE_KEY`: your Cloud Storage access key
+- `SLUG_GOOGLE_SECRET`: your Cloud Storage secret access key
+
+```sh
+docker run -e SLUG_KEY=my-bucket/items/stuff/someslug.tgz -e SLUG_GOOGLE_KEY=XXX -e SLUG_GOOGLE_SECRET=XXX panoplymedia/slugrunner start web
+```
+
 ## Debugging
 
 Set environment variable `DEBUG=true` to get debug output from the script.
 
 ## Motivation and Thanks
 
-This library is heavily based on [deis/slugrunner](https://github.com/deis/slugrunner), and most notably adds the option to run a slug off of [Amazon S3](https://aws.amazon.com/s3/).
+This library is heavily based on [deis/slugrunner](https://github.com/deis/slugrunner), and most notably adds the option to run a slug off of [Amazon S3](https://aws.amazon.com/s3/) and [Google Cloud Storage](https://cloud.google.com/storage/).

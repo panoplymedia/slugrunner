@@ -3,7 +3,7 @@ set -eo pipefail
 
 [[ $DEBUG ]] && set -x
 
-## Load slug from Bind Mount, URL, AWS or STDIN
+## Load slug from Bind Mount, URL, AWS, Google Cloud Storage or STDIN
 
 export HOME=/app
 mkdir -p $HOME
@@ -20,6 +20,16 @@ elif [[ $SLUG_AWS_KEY && $SLUG_AWS_SECRET && $SLUG_KEY ]]; then
   unset AWS_ACCESS_KEY_ID
   unset AWS_SECRET_ACCESS_KEY
   unset SLUG_KEY
+elif [[ $SLUG_GOOGLE_KEY && $SLUG_GOOGLE_SECRET && $SLUG_KEY ]]; then
+  echo "[Credentials]" > /etc/boto.cfg
+  echo "gs_access_key_id = $SLUG_GOOGLE_KEY" >> /etc/boto.cfg
+  echo "gs_secret_access_key = $SLUG_GOOGLE_SECRET" >> /etc/boto.cfg
+  cat /etc/boto.cfg
+  gsutil cp gs://$SLUG_KEY slug.tgz
+	tar -xzf slug.tgz -C $HOME
+	rm slug.tgz
+  # clear out boto credentials
+  echo '' > /etc/boto.cfg
 elif [[ $SLUG_URL ]]; then
   # download slug from url
   curl $SLUG_URL slug.tgz

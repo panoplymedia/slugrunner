@@ -5,6 +5,13 @@ MAINTAINER Jason Cox <jason.cox@panoply.fm>
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev python python-pip
 RUN pip install awscli
 
+RUN \
+ wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.zip -qO /tmp/google-cloud-sdk.zip && \
+ unzip -qd /usr/local /tmp/google-cloud-sdk.zip && \
+ /usr/local/google-cloud-sdk/install.sh --usage-reporting=false --path-update=false --bash-completion=false && \
+ rm -rf /tmp/google-cloud-sdk.zip
+ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
+RUN touch /etc/boto.cfg
 RUN mkdir /app
 RUN addgroup --quiet --gid 2000 slug && \
     useradd slug --uid=2000 --gid=2000 --home-dir /app --no-create-home \
@@ -14,7 +21,7 @@ WORKDIR /app
 
 ADD ./runner /runner
 RUN chmod +x /runner/init
-RUN chown slug:slug /app /runner/init
+RUN chown slug:slug /app /runner/init /etc/boto.cfg
 
 # make app binaries etc available
 RUN echo '# source /app/.profile.d/* \n\
@@ -30,6 +37,7 @@ fi \n' >> /etc/profile
 
 USER slug
 ENV HOME /app
+
 ENTRYPOINT ["/runner/init"]
 
 ONBUILD RUN mkdir -p /app
