@@ -24,7 +24,6 @@ elif [[ $SLUG_GOOGLE_KEY && $SLUG_GOOGLE_SECRET && $SLUG_KEY ]]; then
   echo "[Credentials]" > /etc/boto.cfg
   echo "gs_access_key_id = $SLUG_GOOGLE_KEY" >> /etc/boto.cfg
   echo "gs_secret_access_key = $SLUG_GOOGLE_SECRET" >> /etc/boto.cfg
-  cat /etc/boto.cfg
   gsutil cp gs://$SLUG_KEY slug.tgz
 	tar -xzf slug.tgz -C $HOME
 	rm slug.tgz
