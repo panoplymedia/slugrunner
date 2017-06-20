@@ -2,7 +2,8 @@ FROM heroku/cedar:14
 MAINTAINER Jason Cox <jason.cox@panoply.fm>
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev python python-pip
+RUN apt-get update -qq && apt-get install -y gcc build-essential libpq-dev python python-pip python-dev python-setuptools
+RUN pip install -U crcmod
 RUN pip install awscli
 
 RUN \
