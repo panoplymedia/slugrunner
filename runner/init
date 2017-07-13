@@ -29,6 +29,9 @@ elif [[ $SLUG_GOOGLE_KEY && $SLUG_GOOGLE_SECRET && $SLUG_KEY ]]; then
 	rm slug.tgz
   # clear out boto credentials
   echo '' > /etc/boto.cfg
+  unset SLUG_GOOGLE_KEY
+  unset SLUG_GOOGLE_SECRET
+  unset SLUG_KEY
 elif [[ $SLUG_URL ]]; then
   # download slug from url
   curl $SLUG_URL slug.tgz
