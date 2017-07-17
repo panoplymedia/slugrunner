@@ -21,16 +21,28 @@ elif [[ $SLUG_AWS_KEY && $SLUG_AWS_SECRET && $SLUG_KEY ]]; then
   unset AWS_SECRET_ACCESS_KEY
   unset SLUG_KEY
 elif [[ $SLUG_GOOGLE_KEY && $SLUG_GOOGLE_SECRET && $SLUG_KEY ]]; then
+  # download slug from Google Cloud using Key and Secret to authenticate
   echo "[Credentials]" > /etc/boto.cfg
   echo "gs_access_key_id = $SLUG_GOOGLE_KEY" >> /etc/boto.cfg
   echo "gs_secret_access_key = $SLUG_GOOGLE_SECRET" >> /etc/boto.cfg
   gsutil cp gs://$SLUG_KEY slug.tgz
-	tar -xzf slug.tgz -C $HOME
-	rm slug.tgz
+  tar -xzf slug.tgz -C $HOME
+  rm slug.tgz
   # clear out boto credentials
   echo '' > /etc/boto.cfg
   unset SLUG_GOOGLE_KEY
   unset SLUG_GOOGLE_SECRET
+  unset SLUG_KEY
+elif [[ $SLUG_GOOGLE_ACCOUNT_KEY_B64 && $SLUG_KEY ]]; then
+  # download slug from Google Cloud using Service Account Key to authenticate
+  $( echo $SLUG_GOOGLE_ACCOUNT_KEY_B64 | base64 --decode > /etc/service_account_key.json )
+  echo "gs_service_key_file = /etc/service_account_key.json" >> /etc/boto.cfg
+  gsutil cp gs://$SLUG_KEY slug.tgz
+  tar -xzf slug.tgz -C $HOME
+  rm slug.tgz
+  # clear out boto credentials
+  echo '' > /etc/boto.cfg
+  unset SLUG_GOOGLE_ACCOUNT_KEY_B64
   unset SLUG_KEY
 elif [[ $SLUG_URL ]]; then
   # download slug from url

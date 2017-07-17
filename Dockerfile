@@ -13,6 +13,7 @@ RUN \
  rm -rf /tmp/google-cloud-sdk.zip
 ENV PATH /usr/local/google-cloud-sdk/bin:$PATH
 RUN touch /etc/boto.cfg
+RUN touch /etc/service_account_key.json
 RUN mkdir /app
 RUN addgroup --quiet --gid 2000 slug && \
     useradd slug --uid=2000 --gid=2000 --home-dir /app --no-create-home \
@@ -22,7 +23,7 @@ WORKDIR /app
 
 ADD ./runner /runner
 RUN chmod +x /runner/init
-RUN chown slug:slug /app /runner/init /etc/boto.cfg
+RUN chown slug:slug /app /runner/init /etc/boto.cfg /etc/service_account_key.json
 
 # make app binaries etc available
 RUN echo '# source /app/.profile.d/* \n\
