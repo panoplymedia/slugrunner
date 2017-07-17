@@ -76,9 +76,9 @@ To use a slug from Google Cloud Storage with a developer access key and secret k
 docker run -e SLUG_KEY=my-bucket/items/stuff/someslug.tgz -e SLUG_GOOGLE_KEY=XXX -e SLUG_GOOGLE_SECRET=XXX panoplymedia/slugrunner start web
 ```
 
-To use a slug from Google Cloud Storage with service account credentials, follow Google's [documentation](https://cloud.google.com/storage/docs/authentication#generating-a-private-key) to generate a service account credential and convert it into a Base64 string. Then provide the following environment variables:
+To use a slug from Google Cloud Storage with service account credentials, follow Google's [documentation](https://cloud.google.com/storage/docs/authentication#generating-a-private-key) to generate a JSON service account credential and convert the credential into a Base64 string. Then provide the following environment variables:
 - `SLUG_KEY`: `cloud-storage-bucket-name/path/to/slug.tgz`
-- `SLUG_GOOGLE_ACCOUNT_KEY_B64`: your Base64 encoded Google service account credentials
+- `SLUG_GOOGLE_ACCOUNT_KEY_B64`: your Base64 encoded JSON-formatted Google service account credentials
 
 ## Debugging
 
