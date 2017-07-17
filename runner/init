@@ -36,7 +36,8 @@ elif [[ $SLUG_GOOGLE_KEY && $SLUG_GOOGLE_SECRET && $SLUG_KEY ]]; then
 elif [[ $SLUG_GOOGLE_ACCOUNT_KEY_B64 && $SLUG_KEY ]]; then
   # download slug from Google Cloud using Service Account Key to authenticate
   $( echo $SLUG_GOOGLE_ACCOUNT_KEY_B64 | base64 --decode > /etc/service_account_key.json )
-  echo "gs_service_key_file = /etc/service_account_key.json" >> /etc/boto.cfg
+  echo "[Credentials]" > /etc/boto.cfg
+  echo 'gs_service_key_file = /etc/service_account_key.json' >> /etc/boto.cfg
   gsutil cp gs://$SLUG_KEY slug.tgz
   tar -xzf slug.tgz -C $HOME
   rm slug.tgz
