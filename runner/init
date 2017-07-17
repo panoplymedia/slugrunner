@@ -41,6 +41,7 @@ elif [[ $SLUG_GOOGLE_ACCOUNT_KEY_B64 && $SLUG_KEY ]]; then
   tar -xzf slug.tgz -C $HOME
   rm slug.tgz
   # clear out boto credentials
+  echo '' > /etc/service_account_key.json
   echo '' > /etc/boto.cfg
   unset SLUG_GOOGLE_ACCOUNT_KEY_B64
   unset SLUG_KEY
